@@ -1,0 +1,102 @@
+.calc-body {
+    background-color: rgba(60, 63, 65, 0.84);
+    margin: auto;
+    width: 450px;
+    height: 575px;
+}
+
+.display-container,
+.button-container {
+    box-sizing: border-box;
+}
+
+.display-container {
+    height: 25%;
+    padding: 3%;
+}
+
+.display {
+    /*position: relative;*/
+    background-color: #0066cc;
+    height: 100%;
+}
+
+.button-container {
+    height: 75%;
+    padding: 0 3% 5% 3%;
+    display: flex;
+    flex-direction: row;
+}
+
+.leftside {
+    background-color: lightgrey;
+    /*flex-grow: 2;*/
+    width: 75%;
+    flex-flow: row wrap;
+    height: 100%;
+    margin: 4px;
+    padding: 2px;
+    display: flex;
+}
+
+.top-mid {
+    display: flex;
+    width: 100%;
+    height: 25%;
+    justify-content: space-around;
+    align-items: stretch;
+}
+
+.top-mid > button {
+    box-sizing: border-box;
+    /*padding: 3%;*/
+    width: 100%;
+    margin: 3%;
+}
+
+.twelvegrid {
+    display: flex;
+    justify-content: space-around;
+    /*align-items: stretch;*/
+    height: 75%;
+    width: 100%;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+
+}
+
+.twelvegrid > button {
+    box-sizing: border-box;
+    /*padding: 3px;*/
+    /*margin: 4px;*/
+    width: 30%;
+    height: 22%;
+    margin: 4px;
+    padding: 2px;
+
+
+}
+
+.rightside {
+    background-color: lightgrey;
+    /*flex-grow: 1;*/
+    /*padding: 3%;*/
+    width: 25%;
+    height: 100%;
+    margin: 4px;
+    padding: 2px;
+    /*box-sizing: border-box;*/
+
+    display: flex;
+    flex-direction: column;
+}
+
+.rightside > button {
+    flex-grow: 1;
+    margin: 4px;
+    padding: 2px;
+}
+
+#add {
+    flex-grow: 2;
+}

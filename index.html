@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="script.js"></script>
+    <!--<script type="text/javascript">-->
+        <!--$(document).ready(applyClickHandlers);-->
+
+        <!--function applyClickHandlers() {-->
+            <!--$(".numbers > button").click(inputNumbers)-->
+        <!--}-->
+
+        <!--function inputNumbers() {-->
+            <!--//console.log('input numbers was called');-->
+            <!--var num = $(this).text();-->
+            <!--console.log(num + ' was pressed');-->
+        <!--}-->
+    <!--</script>-->
+
+</head>
+<body>
+<div class="calc-body">
+    <div class="display-container">
+        <div class="display"></div>
+    </div>
+    <div class="button-container">
+        <div class="leftside">
+            <div class="top-mid">
+                <button>C</button>
+                <button>CE</button>
+            </div>
+            <div class="twelvegrid">
+                <button class="number">0</button>
+                <button>.</button>
+                <button class="operator" id="equals">=</button>
+                <button class="number">1</button>
+                <button class="number">2</button>
+                <button class="number">3</button>
+                <button class="number">4</button>
+                <button class="number">5</button>
+                <button class="number">6</button>
+                <button class="number">7</button>
+                <button class="number">8</button>
+                <button class="number">9</button>
+            </div>
+        </div>
+        <div class="rightside">
+            <button class="operator" id="divide">&#247</button>
+            <button class="operator" id="multiply">&times</button>
+            <button class="operator" id="subtract">-</button>
+            <button class="operator" id="add">+</button>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
