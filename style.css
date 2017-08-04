@@ -19,6 +19,8 @@
     /*position: relative;*/
     background-color: #0066cc;
     height: 100%;
+    color: lightgrey;
+    font-size: 30px;
 }
 
 .button-container {
@@ -61,7 +63,7 @@
     height: 75%;
     width: 100%;
     flex-wrap: wrap;
-    flex-direction: row-reverse;
+    flex-direction: row;
 
 }
 
