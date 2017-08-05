@@ -49,9 +49,10 @@ function Calculator() {
     this.operator = null;
 
     this.justEqualsed = false;
+    this.forceWriteToFirstOperand = false;
 
     this.log_status = function () {
-        console.log(self.Operand1.getValue(), self.operator, self.Operand2.getValue());
+        console.log(self.Operand1.getValue(), self.operator, self.Operand2.getValue(), "justEqualsed: " + self.justEqualsed, "forceWriteToFirstOperand: " + self.forceWriteToFirstOperand);
     };
 
     this.The_View = new View();
@@ -67,11 +68,19 @@ function Calculator() {
         //     self.justEqualsed = false;
         // }
 // debugger
-        if (self.justEqualsed){
-            self.Operand1.reset();
+//         if (self.justEqualsed && self.forceWriteToFirstOperand){
+//             self.Operand1.reset();
+//             self.Operand1.add_digit(num);
+//             self.justEqualsed = false;
+//             self.The_View.displaySomething(self.Operand1.getValue());
+        if (self.forceWriteToFirstOperand) {
+            if (self.justEqualsed){
+                self.Operand1.reset();
+                self.justEqualsed = false;
+            }
             self.Operand1.add_digit(num);
-            self.justEqualsed = false;
             self.The_View.displaySomething(self.Operand1.getValue());
+
         } else {
 
             if (self.operator === null) {
@@ -106,22 +115,24 @@ function Calculator() {
     };
 
     this.opIn = function (op) {
+        if (self.forceWriteToFirstOperand) {
+            self.forceWriteToFirstOperand = false;
+            self.Operand2.reset();
+        } else {
 
-
-        /**************************************if I already have an operator but not another nubmer then swap out operator*/
-        /*******if i have an opaeerator and a second number immediately do math, and put it into the first number. Then i should be ready to carry on as normal*/
-        if (self.operator !== null && self.Operand2.getValue() !== null) {
-            if (!self.justEqualsed)
-            {
-                self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.operator));
-                /**Don't forget to clear out the second number!*/
-                self.Operand2.reset();
-            } else { //if equals sign WAS just pressed
-                self.Operand1.setValue(self.The_View.getResult());
-                self.Operand2.reset();
+            /**************************************if I already have an operator but not another nubmer then swap out operator*/
+            /*******if i have an opaeerator and a second number immediately do math, and put it into the first number. Then i should be ready to carry on as normal*/
+            if (self.operator !== null && self.Operand2.getValue() !== null) {
+                if (!self.justEqualsed) {
+                    self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.operator));
+                    /**Don't forget to clear out the second number!*/
+                    self.Operand2.reset();
+                } else { //if equals sign WAS just pressed
+                    self.Operand1.setValue(self.The_View.getResult());
+                    self.Operand2.reset();
+                }
             }
         }
-
         self.operator = op;
         self.justEqualsed = false;
         self.log_status();
@@ -229,6 +240,7 @@ function Calculator() {
 
         self.log_status();
         self.justEqualsed = true;
+        self.forceWriteToFirstOperand = true;
     };
 
     this.prepareToCalculate = function () {
@@ -247,6 +259,7 @@ function Calculator() {
         this.operator = null;
         this.The_View.displaySomething("");
         this.justEqualsed = false;
+        this.forceWriteToFirstOperand = false;
     };
 
     this.backToHalfBaseline = function () {
