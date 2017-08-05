@@ -35,9 +35,10 @@ function equalsButtonClick() {
 
 function clearButtonClick() {
     The_Calculator.backToBaseline();
-    console.log("Operand1 reset to " + The_Calculator.Operand1.getValue());
-    console.log("Operand2 reset to " + The_Calculator.Operand2.getValue());
-    console.log("Operator reset to " + The_Calculator.operator);
+    // console.log("Operand1 reset to " + The_Calculator.Operand1.getValue());
+    // console.log("Operand2 reset to " + The_Calculator.Operand2.getValue());
+    // console.log("Operator reset to " + The_Calculator.operator);
+    The_Calculator.log_status();
 }
 
 function Calculator() {
@@ -47,21 +48,55 @@ function Calculator() {
     this.Operand2 = new Operand();
     this.operator = null;
 
+    this.justEqualsed = false;
+    this.forceWriteToFirstOperand = false;
+
+    this.log_status = function () {
+        console.log(self.Operand1.getValue(), self.operator, self.Operand2.getValue(), "justEqualsed: " + self.justEqualsed, "forceWriteToFirstOperand: " + self.forceWriteToFirstOperand);
+    };
+
     this.The_View = new View();
 
     this.numIn = function (num) {
         // if (self.Operand1.getValue() === null) {
-        if (self.operator === null) {
+
+        // if (self.justEqualsed){
+        //     self.Operand1.reset();
+        //     // self.Operand2.reset();
+        //     self.operator = null;
+        //
+        //     self.justEqualsed = false;
+        // }
+// debugger
+//         if (self.justEqualsed && self.forceWriteToFirstOperand){
+//             self.Operand1.reset();
+//             self.Operand1.add_digit(num);
+//             self.justEqualsed = false;
+//             self.The_View.displaySomething(self.Operand1.getValue());
+        if (self.forceWriteToFirstOperand) {
+            if (self.justEqualsed){
+                self.Operand1.reset();
+                self.justEqualsed = false;
+            }
             self.Operand1.add_digit(num);
-            console.log("Operand1 is now " + self.Operand1.getValue());
             self.The_View.displaySomething(self.Operand1.getValue());
+
+        } else {
+
+            if (self.operator === null) {
+                self.Operand1.add_digit(num);
+                // console.log("Operand1 is now " + self.Operand1.getValue());
+                self.The_View.displaySomething(self.Operand1.getValue());
+            }
+
+            else {
+                self.Operand2.add_digit(num);
+                // console.log("Operand2 is now " + self.Operand2.getValue());
+                self.The_View.displaySomething(self.Operand2.getValue());
+            }
         }
 
-        else {
-            self.Operand2.add_digit(num);
-            console.log("Operand2 is now " + self.Operand2.getValue());
-            self.The_View.displaySomething(self.Operand2.getValue());
-        }
+        self.log_status();
     };
 
     this.decIn = function () {
@@ -80,9 +115,27 @@ function Calculator() {
     };
 
     this.opIn = function (op) {
-        self.operator = op;
-        console.log("operator is now " + self.operator);
+        if (self.forceWriteToFirstOperand) {
+            self.forceWriteToFirstOperand = false;
+            self.Operand2.reset();
+        } else {
 
+            /**************************************if I already have an operator but not another nubmer then swap out operator*/
+            /*******if i have an opaeerator and a second number immediately do math, and put it into the first number. Then i should be ready to carry on as normal*/
+            if (self.operator !== null && self.Operand2.getValue() !== null) {
+                if (!self.justEqualsed) {
+                    self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.operator));
+                    /**Don't forget to clear out the second number!*/
+                    self.Operand2.reset();
+                } else { //if equals sign WAS just pressed
+                    self.Operand1.setValue(self.The_View.getResult());
+                    self.Operand2.reset();
+                }
+            }
+        }
+        self.operator = op;
+        self.justEqualsed = false;
+        self.log_status();
     };
 
     this.doMathAndResult = function () {
@@ -93,14 +146,9 @@ function Calculator() {
         // this.The_View.setResult(this.doMath());
     };
 
-    this.doMath = function (argNum1, argNum2) {
+    this.doMath = function (num1, num2, op) {
 
-        if (arguments.length === 0) {
-            var num1 = this.Operand1.getValue();
-            var num2 = this.Operand2.getValue();
-        }
-
-        switch (this.operator) {
+        switch (op) {
             case '+':
             case 'add':
                 return num1 + num2;
@@ -149,19 +197,54 @@ function Calculator() {
 
 
     this.calculate = function () {
-        if (this.Operand2.getValue() === 0) {
-            // this.Operand1.copyToOtherOperand(this.Operand2)
-            this.doMath(this.Operand1.getValue(),this.Operand1.getValue())
-        }
-        else {
-            this.doMathAndResult();
-        }
-        //this.prepareForMoreMath();
-        this.Operand1.setValue(this.The_View.getResult());
-        this.Operand2.refresh();
+        // var argNum1 = null;
+        // var argNum2 = null;
+        // var argOp = null;
+        var result = null;
 
-        // this.operator = null;
-        // console.log("Operator is now " + this.operator);
+        if (self.operator) { //if there IS an operator
+            if (self.Operand2.getValue() !== null) { //if there IS a value in Operand2
+                result = self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.operator);
+            }
+            else { // if there is NOT a value in Operand2
+                result = self.doMath(self.Operand1.getValue(), self.Operand1.getValue(), self.operator);
+                self.Operand2.setValue(self.Operand1.getValue()); //set operand 2 to operand 1
+                // self.Operand1.setValue(result); //set operand 1 to be the result //I do this after this code block anyway
+                //with both of these things done, status should be ready to continue adding incrementally.
+            }
+
+
+            self.Operand1.setValue(result);
+            self.The_View.setResult(result);
+            self.The_View.displayResult();
+
+        } else { //if there is NOT an operator
+
+        }
+
+        // self.Operand1.setValue(result);
+        // if (this.Operand2.getValue() === 0) {
+        //     // this.Operand1.copyToOtherOperand(this.Operand2)
+        //     this.doMath(this.Operand1.getValue(),this.Operand1.getValue())
+        // }
+        // else {
+        //     this.doMathAndResult();
+        // }
+        // //this.prepareForMoreMath();
+        // this.Operand1.setValue(this.The_View.getResult());
+        // this.Operand2.refresh();
+        //
+        // // this.operator = null;
+        console.log("result calculated is", result);
+
+
+        self.log_status();
+        self.justEqualsed = true;
+        self.forceWriteToFirstOperand = true;
+    };
+
+    this.prepareToCalculate = function () {
+
     };
 
 
@@ -171,10 +254,12 @@ function Calculator() {
     };
 
     this.backToBaseline = function () {
-        this.Operand1.refresh();
-        this.Operand2.refresh();
+        this.Operand1.reset();
+        this.Operand2.reset();
         this.operator = null;
         this.The_View.displaySomething("");
+        this.justEqualsed = false;
+        this.forceWriteToFirstOperand = false;
     };
 
     this.backToHalfBaseline = function () {
@@ -210,7 +295,7 @@ function View() {
 
 
 function Operand() {
-    this.value = 0;
+    this.value = null;
 
     this.isDecimal = false;
     this.decimalCounter = 0;
@@ -239,6 +324,12 @@ function Operand() {
 
     this.refresh = function () {
         this.value = 0;
+        this.isDecimal = false;
+        this.decimalCounter = 0;
+    };
+
+    this.reset = function () {
+        this.value = null;
         this.isDecimal = false;
         this.decimalCounter = 0;
     };
