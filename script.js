@@ -239,10 +239,16 @@ function Calculator() {
         // var argNum2 = null;
         // var argOp = null;
         var result = null;
-
+// debugger;
         if (self.Operator.value) { //if there IS an operator
             if (self.Operand2.getValue() !== null) { //if there IS a value in Operand2
-                result = self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.Operator.value);
+                if (self.Operand2.getValue() === 0 && self.Operator.value === 'divide'){ //if dividing by zero
+                    result = "error";
+                }
+                    else
+                {
+                    result = self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.Operator.value);
+                }
             }
             else { // if there is NOT a value in Operand2
                 result = self.doMath(self.Operand1.getValue(), self.Operand1.getValue(), self.Operator.value);
@@ -251,11 +257,14 @@ function Calculator() {
                 //with both of these things done, status should be ready to continue adding incrementally.
             }
 
-            if (self.history.historicOperator) { //if there IS a history (checked by seeing if there's a historic operator
-                result = self.doMath(self.history.historicNumber,result,self.history.historicOperator);
-            }
+            if (result !== "error") {
+                if (self.history.historicOperator) { //if there IS a history (checked by seeing if there's a historic operator
+                    result = self.doMath(self.history.historicNumber, result, self.history.historicOperator);
+                }
 
-            self.Operand1.setValue(result);
+
+                self.Operand1.setValue(result);
+            }
             self.The_View.setResult(result);
             self.The_View.displayResult();
 
