@@ -142,6 +142,10 @@ function Calculator() {
                     } else {
                         self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.Operator.value));
                     }
+                    if (incomingOperator.precedence < self.Operator.precedence) {
+                        self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.history.historicNumber, self.history.historicOperator));
+                    }
+
                     /**Don't forget to clear out the second number!*/
                     self.Operand2.reset();
                 } else { //if equals sign WAS just pressed
