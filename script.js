@@ -46,13 +46,17 @@ function Calculator() {
 
     this.Operand1 = new Operand();
     this.Operand2 = new Operand();
-    this.operator = null;
+    this.Operator = new Operator();
+
+    this.history = new History();
 
     this.justEqualsed = false;
     this.forceWriteToFirstOperand = false;
+    this.historyMode = false;
 
     this.log_status = function () {
-        console.log(self.Operand1.getValue(), self.operator, self.Operand2.getValue(), "justEqualsed: " + self.justEqualsed, "forceWriteToFirstOperand: " + self.forceWriteToFirstOperand);
+        console.log(self.Operand1.getValue(), self.Operator.value, self.Operand2.getValue(), "justEqualsed: " + self.justEqualsed, "forceWriteToFirstOperand: " + self.forceWriteToFirstOperand);
+        console.log(this.history.historicNumber, this.history.historicOperator);
     };
 
     this.The_View = new View();
@@ -74,7 +78,7 @@ function Calculator() {
 //             self.justEqualsed = false;
 //             self.The_View.displaySomething(self.Operand1.getValue());
         if (self.forceWriteToFirstOperand) {
-            if (self.justEqualsed){
+            if (self.justEqualsed) {
                 self.Operand1.reset();
                 self.justEqualsed = false;
             }
@@ -83,7 +87,7 @@ function Calculator() {
 
         } else {
 
-            if (self.operator === null) {
+            if (self.Operator.value === null) {
                 self.Operand1.add_digit(num);
                 // console.log("Operand1 is now " + self.Operand1.getValue());
                 self.The_View.displaySomething(self.Operand1.getValue());
@@ -101,7 +105,7 @@ function Calculator() {
 
     this.decIn = function () {
         // if (self.Operand1.getValue() === null) {
-        if (self.operator === null && !self.Operand1.isDecimal) {
+        if (self.Operator.value === null && !self.Operand1.isDecimal) {
             self.Operand1.isDecimal = true;
             console.log("Operand1 is now " + self.Operand1.getValue());
             self.The_View.displaySomething(self.Operand1.getValue() + '.');
@@ -115,6 +119,13 @@ function Calculator() {
     };
 
     this.opIn = function (op) {
+        var incomingOperator = new Operator();
+        incomingOperator.setValue(op);
+
+        // if (incomingOperator.precedence > self.Operator.precedence) {
+        //     history.historicNumber =
+        // }
+
         if (self.forceWriteToFirstOperand) {
             self.forceWriteToFirstOperand = false;
             self.Operand2.reset();
@@ -122,9 +133,15 @@ function Calculator() {
 
             /**************************************if I already have an operator but not another nubmer then swap out operator*/
             /*******if i have an opaeerator and a second number immediately do math, and put it into the first number. Then i should be ready to carry on as normal*/
-            if (self.operator !== null && self.Operand2.getValue() !== null) {
+            if (self.Operator.value !== null && self.Operand2.getValue() !== null) {
                 if (!self.justEqualsed) {
-                    self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.operator));
+                    if (incomingOperator.precedence > self.Operator.precedence) {
+                        self.history.historicNumber = self.Operand1.getValue();
+                        self.history.historicOperator = self.Operator.value;
+                        self.Operand1.setValue(self.Operand2.getValue());
+                    } else {
+                        self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.Operator.value));
+                    }
                     /**Don't forget to clear out the second number!*/
                     self.Operand2.reset();
                 } else { //if equals sign WAS just pressed
@@ -133,7 +150,10 @@ function Calculator() {
                 }
             }
         }
-        self.operator = op;
+
+
+        // debugger;
+        self.Operator.setValue(op);
         self.justEqualsed = false;
         self.log_status();
     };
@@ -202,17 +222,20 @@ function Calculator() {
         // var argOp = null;
         var result = null;
 
-        if (self.operator) { //if there IS an operator
+        if (self.Operator.value) { //if there IS an operator
             if (self.Operand2.getValue() !== null) { //if there IS a value in Operand2
-                result = self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.operator);
+                result = self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.Operator.value);
             }
             else { // if there is NOT a value in Operand2
-                result = self.doMath(self.Operand1.getValue(), self.Operand1.getValue(), self.operator);
+                result = self.doMath(self.Operand1.getValue(), self.Operand1.getValue(), self.Operator.value);
                 self.Operand2.setValue(self.Operand1.getValue()); //set operand 2 to operand 1
                 // self.Operand1.setValue(result); //set operand 1 to be the result //I do this after this code block anyway
                 //with both of these things done, status should be ready to continue adding incrementally.
             }
 
+            if (self.history.historicOperator) { //if there IS a history (checked by seeing if there's a historic operator
+                result = self.doMath(self.history.historicNumber,result,self.history.historicOperator);
+            }
 
             self.Operand1.setValue(result);
             self.The_View.setResult(result);
@@ -256,10 +279,12 @@ function Calculator() {
     this.backToBaseline = function () {
         this.Operand1.reset();
         this.Operand2.reset();
-        this.operator = null;
+        this.Operator.reset();
         this.The_View.displaySomething("");
         this.justEqualsed = false;
         this.forceWriteToFirstOperand = false;
+        this.historyMode = false;
+        this.history.clearHistory();
     };
 
     this.backToHalfBaseline = function () {
@@ -269,6 +294,17 @@ function Calculator() {
     // this.view = function The_View() {
     //     this.resultNum = null;
     // };
+}
+
+function History() {
+    this.historicNumber = null;
+    this.historicOperator = null;
+
+    this.clearHistory = function () {
+        this.historicNumber = null;
+        this.historicOperator = null;
+    };
+
 }
 
 var The_Calculator = new Calculator();
@@ -349,3 +385,32 @@ function Operand() {
     };
 }
 
+function Operator() {
+    this.value = null;
+
+    this.precedence = null;
+
+    this.setValue = function (op) {
+        this.value = op;
+        switch (op) {
+            case '+':
+            case 'add':
+            case '-':
+            case 'subtract':
+                this.precedence = 1;
+                break;
+            case '*':
+            case 'x':
+            case 'X':
+            case 'multiply':
+            case 'divide':
+            case '/':
+                this.precedence = 2;
+                break;
+        }
+    };
+    this.reset = function () {
+        this.value = null;
+        this.precedence = null;
+    }
+}
