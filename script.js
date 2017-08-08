@@ -19,9 +19,7 @@ function applyClickHandlers() {
 }
 
 function inputNumbers() {
-    //console.log('input numbers was called');
     var num = $(this).text();
-    // console.log(num + ' was pressed');
     The_Calculator.numIn(parseInt(num));
 }
 
@@ -31,7 +29,6 @@ function decimalButtonClick() {
 
 function inputOperator() {
     var operator = $(this).attr('id');
-    // console.log(operator + ' was pressed');
     The_Calculator.opIn(operator);
 }
 
@@ -41,9 +38,6 @@ function equalsButtonClick() {
 
 function clearButtonClick() {
     The_Calculator.backToBaseline();
-    // console.log("Operand1 reset to " + The_Calculator.Operand1.getValue());
-    // console.log("Operand2 reset to " + The_Calculator.Operand2.getValue());
-    // console.log("Operator reset to " + The_Calculator.operator);
     The_Calculator.log_status();
 }
 
@@ -62,7 +56,6 @@ function Calculator() {
 
     this.justEqualsed = false;
     this.forceWriteToFirstOperand = false;
-    this.historyMode = false;
 
     this.log_status = function () {
         console.log(self.Operand1.getValue(), self.Operator.value, self.Operand2.getValue(), "justEqualsed: " + self.justEqualsed, "forceWriteToFirstOperand: " + self.forceWriteToFirstOperand);
@@ -72,21 +65,6 @@ function Calculator() {
     this.The_View = new View();
 
     this.numIn = function (num) {
-        // if (self.Operand1.getValue() === null) {
-
-        // if (self.justEqualsed){
-        //     self.Operand1.reset();
-        //     // self.Operand2.reset();
-        //     self.operator = null;
-        //
-        //     self.justEqualsed = false;
-        // }
-// debugger
-//         if (self.justEqualsed && self.forceWriteToFirstOperand){
-//             self.Operand1.reset();
-//             self.Operand1.add_digit(num);
-//             self.justEqualsed = false;
-//             self.The_View.displaySomething(self.Operand1.getValue());
         if (self.forceWriteToFirstOperand) {
             if (self.justEqualsed) {
                 self.Operand1.reset();
@@ -99,13 +77,11 @@ function Calculator() {
 
             if (self.Operator.value === null) {
                 self.Operand1.add_digit(num);
-                // console.log("Operand1 is now " + self.Operand1.getValue());
                 self.The_View.displaySomething(self.Operand1.getValue());
             }
 
             else {
                 self.Operand2.add_digit(num);
-                // console.log("Operand2 is now " + self.Operand2.getValue());
                 self.The_View.displaySomething(self.Operand2.getValue());
             }
         }
@@ -114,7 +90,6 @@ function Calculator() {
     };
 
     this.decIn = function () {
-        // if (self.Operand1.getValue() === null) {
         if (self.Operator.value === null && !self.Operand1.isDecimal) {
             self.Operand1.isDecimal = true;
             console.log("Operand1 is now " + self.Operand1.getValue());
@@ -131,10 +106,6 @@ function Calculator() {
     this.opIn = function (op) {
         var incomingOperator = new Operator();
         incomingOperator.setValue(op);
-
-        // if (incomingOperator.precedence > self.Operator.precedence) {
-        //     history.historicNumber =
-        // }
 
         if (self.forceWriteToFirstOperand) {
             self.forceWriteToFirstOperand = false;
@@ -169,19 +140,9 @@ function Calculator() {
             }
         }
 
-
-        // debugger;
         self.Operator.setValue(op);
         self.justEqualsed = false;
         self.log_status();
-    };
-
-    this.doMathAndResult = function () {
-        var result = this.doMath();
-        console.log("Result of the math is " + result);
-        this.The_View.setResult(result);
-        this.The_View.displayResult();
-        // this.The_View.setResult(this.doMath());
     };
 
     this.doMath = function (num1, num2, op) {
@@ -206,40 +167,8 @@ function Calculator() {
         }
     };
 
-
-    //Original version
-    // this.calculate = function () {
-    //     this.doMathAndResult();
-    //     //this.prepareForMoreMath();
-    //     this.Operand1.setValue(this.The_View.getResult());
-    //     // this.Operand2.refresh();
-    //
-    //     // this.operator = null;
-    //     // console.log("Operator is now " + this.operator);
-    // };
-
-    // //Dan's Idea Version
-    // this.calculate = function () {
-    //     if (this.Operand2.getValue() === 0){
-    //         this.Operand1.copyToOtherOperand(this.Operand2)
-    //     }
-    //
-    //     this.doMathAndResult();
-    //     //this.prepareForMoreMath();
-    //     this.Operand1.setValue(this.The_View.getResult());
-    //     this.Operand2.refresh();
-    //
-    //     // this.operator = null;
-    //     // console.log("Operator is now " + this.operator);
-    // };
-
-
     this.calculate = function () {
-        // var argNum1 = null;
-        // var argNum2 = null;
-        // var argOp = null;
         var result = null;
-// debugger;
         if (self.Operator.value) { //if there IS an operator
             if (self.Operand2.getValue() !== null) { //if there IS a value in Operand2
                 if (self.Operand2.getValue() === 0 && self.Operator.value === 'divide'){ //if dividing by zero
@@ -271,20 +200,6 @@ function Calculator() {
         } else { //if there is NOT an operator
 
         }
-
-        // self.Operand1.setValue(result);
-        // if (this.Operand2.getValue() === 0) {
-        //     // this.Operand1.copyToOtherOperand(this.Operand2)
-        //     this.doMath(this.Operand1.getValue(),this.Operand1.getValue())
-        // }
-        // else {
-        //     this.doMathAndResult();
-        // }
-        // //this.prepareForMoreMath();
-        // this.Operand1.setValue(this.The_View.getResult());
-        // this.Operand2.refresh();
-        //
-        // // this.operator = null;
         console.log("result calculated is", result);
 
 
@@ -293,25 +208,13 @@ function Calculator() {
         self.forceWriteToFirstOperand = true;
     };
 
-    this.prepareToCalculate = function () {
-
-    };
-
-
-    this.prepareForMoreMath = function () {
-        //this.Operand1.copyToOtherOperand(this.Operand2);
-
-    };
-
     this.backToBaseline = function () {
         this.Operand1.refresh();
         this.Operand2.reset();
         this.Operator.reset();
         this.The_View.setResult(this.Operand1.getValue());
-        // this.The_View.displaySomething("");
         this.justEqualsed = false;
         this.forceWriteToFirstOperand = false;
-        this.historyMode = false;
         this.history.clearHistory();
     };
 
@@ -326,10 +229,6 @@ function Calculator() {
         }
         this.log_status();
     };
-
-    // this.view = function The_View() {
-    //     this.resultNum = null;
-    // };
 }
 
 function History() {
@@ -374,11 +273,6 @@ function Operand() {
     this.decimalCounter = 0;
 
     this.copyToOtherOperand = function (targetOperand) {
-        // var fieldsToCopy = ['value','isDecimal','decimalCounter'];
-        // for(var i=0; i<fieldsToCopy.length; i++){
-        //     targetOperand[fieldsToCopy[i]] = this[fieldsToCopy[i]];
-        // }
-
         targetOperand.value = this.value;
         targetOperand.isDecimal = this.isDecimal;
         targetOperand.decimalCounter = this.decimalCounter;
@@ -391,8 +285,6 @@ function Operand() {
         } else {
             this.value += new_digit * Math.pow(10, -1 * ++this.decimalCounter)
         }
-        // console.log("Current value is ", this.value);
-
     };
 
     this.refresh = function () {
