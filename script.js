@@ -189,8 +189,8 @@ function Calculator() {
             if (result !== "error") {
                 if (self.history.historicOperator) { //if there IS a history (checked by seeing if there's a historic operator
                     result = self.doMath(self.history.historicNumber, result, self.history.historicOperator);
+                    self.history.clearHistory();
                 }
-
 
                 self.Operand1.setValue(result);
             }
