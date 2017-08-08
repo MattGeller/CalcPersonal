@@ -152,6 +152,7 @@ function Calculator() {
                     if (incomingOperator.precedence < self.Operator.precedence) {
                         self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.history.historicNumber, self.history.historicOperator));
                         self.The_View.setResult(self.Operand1.getValue());
+                        self.history.clearHistory();
                     }
 
                     /**Don't forget to clear out the second number!*/
