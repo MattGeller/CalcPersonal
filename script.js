@@ -2,7 +2,12 @@
 ///"With great OOPower comes great OOPesponsibility"///
 ///////////////////////////////////////////////////////
 
-$(document).ready(applyClickHandlers);
+$(document).ready(initialize);
+
+function initialize() {
+    applyClickHandlers();
+    The_Calculator.backToBaseline();
+}
 
 function applyClickHandlers() {
     $(".number").click(inputNumbers);
@@ -139,11 +144,14 @@ function Calculator() {
                         self.history.historicNumber = self.Operand1.getValue();
                         self.history.historicOperator = self.Operator.value;
                         self.Operand1.setValue(self.Operand2.getValue());
+                        self.The_View.setResult(self.Operand1.getValue());
                     } else {
                         self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.Operator.value));
+                        self.The_View.setResult(self.Operand1.getValue());
                     }
                     if (incomingOperator.precedence < self.Operator.precedence) {
                         self.Operand1.setValue(self.doMath(self.Operand1.getValue(), self.history.historicNumber, self.history.historicOperator));
+                        self.The_View.setResult(self.Operand1.getValue());
                     }
 
                     /**Don't forget to clear out the second number!*/
@@ -281,10 +289,11 @@ function Calculator() {
     };
 
     this.backToBaseline = function () {
-        this.Operand1.reset();
+        this.Operand1.refresh();
         this.Operand2.reset();
         this.Operator.reset();
-        this.The_View.displaySomething("");
+        this.The_View.setResult(this.Operand1.getValue());
+        // this.The_View.displaySomething("");
         this.justEqualsed = false;
         this.forceWriteToFirstOperand = false;
         this.historyMode = false;
@@ -318,6 +327,7 @@ function View() {
 
     this.setResult = function (result) {
         this.result = result;
+        this.displayResult();
     };
 
     this.displayResult = function () {
