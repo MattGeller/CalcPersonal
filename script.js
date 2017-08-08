@@ -15,6 +15,7 @@ function applyClickHandlers() {
     $("#equals").click(equalsButtonClick);
     $("#clear").click(clearButtonClick);
     $("#decimal").click(decimalButtonClick);
+    $("#CE_button").click(ceButtonClick)
 }
 
 function inputNumbers() {
@@ -44,6 +45,10 @@ function clearButtonClick() {
     // console.log("Operand2 reset to " + The_Calculator.Operand2.getValue());
     // console.log("Operator reset to " + The_Calculator.operator);
     The_Calculator.log_status();
+}
+
+function ceButtonClick() {
+    The_Calculator.backToHalfBaseline();
 }
 
 function Calculator() {
@@ -302,7 +307,15 @@ function Calculator() {
     };
 
     this.backToHalfBaseline = function () {
-        this.Operand2.refresh();
+        if(!self.justEqualsed) { //if equals was NOT just pressed, e.g. if you're in the middle of typing in a number into Operand2
+
+            this.Operand2.refresh();
+            this.The_View.setResult(this.Operand2.getValue());
+        } else { //if equals WAS just pressed
+            this.Operand1.refresh();
+            this.The_View.setResult(this.Operand1.getValue());
+        }
+        this.log_status();
     };
 
     // this.view = function The_View() {
