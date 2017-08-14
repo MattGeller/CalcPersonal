@@ -65,28 +65,32 @@ function Calculator() {
     this.The_View = new View();
 
     this.numIn = function (num) {
-        if (self.forceWriteToFirstOperand) {
-            if (self.justEqualsed) {
-                self.Operand1.reset();
-                self.justEqualsed = false;
-            }
-            self.Operand1.add_digit(num);
-            self.The_View.displaySomething(self.Operand1.getValue());
+        // LFZ Start
 
-        } else {
+        //check if we're in the mode where we force the input to add numbers into the first operand. (i explain why this could be needed in a comment at the end of the calculate() function).
 
-            if (self.Operator.value === null) {
-                self.Operand1.add_digit(num);
-                self.The_View.displaySomething(self.Operand1.getValue());
-            }
+            //if we are, check if we had just pushed the equals sign
 
-            else {
-                self.Operand2.add_digit(num);
-                self.The_View.displaySomething(self.Operand2.getValue());
-            }
-        }
+                //if we have, then reset the first operand completely.
 
-        self.log_status();
+                //the equals sign is no longer the last thing we pressed, so justEqualsed is false.
+
+            //if we're forced to write to the first operand, add a digit to it.
+
+            //update the display
+
+
+            //if we're NOT in the mode where we're forced to add inputs to the first operand, then we must be in the regular mode. Below is the logic for how the regular mode works.
+
+
+            //if the operator is null, we should add digit on to the first operand and display the current value of the first operand.
+
+            //if the operator is NOT null, then the first operand is set. let's start writing to the second operand! (and display it, of course.)
+
+
+        //just the usual log_status, so I can see what's going on.
+
+        // LFZ Finish
     };
 
     this.decIn = function () {
@@ -168,44 +172,45 @@ function Calculator() {
     };
 
     this.calculate = function () {
-        var result = null;
-        if (self.Operator.value) { //if there IS an operator
-            if (self.Operand2.getValue() !== null) { //if there IS a value in Operand2
-                if (self.Operand2.getValue() === 0 && self.Operator.value === 'divide'){ //if dividing by zero
-                    result = "error";
-                }
-                    else
-                {
-                    result = self.doMath(self.Operand1.getValue(), self.Operand2.getValue(), self.Operator.value);
-                }
-            }
-            else { // if there is NOT a value in Operand2
-                result = self.doMath(self.Operand1.getValue(), self.Operand1.getValue(), self.Operator.value);
-                self.Operand2.setValue(self.Operand1.getValue()); //set operand 2 to operand 1
-                // self.Operand1.setValue(result); //set operand 1 to be the result //I do this after this code block anyway
-                //with both of these things done, status should be ready to continue adding incrementally.
-            }
+        // LFZ Start
+        //get a local result variable ready to go.
+ //if there IS an operator
+//if there IS a value in Operand2
+ //if dividing by zero
 
-            if (result !== "error") {
-                if (self.history.historicOperator) { //if there IS a history (checked by seeing if there's a historic operator
-                    result = self.doMath(self.history.historicNumber, result, self.history.historicOperator);
-                    self.history.clearHistory();
-                }
+                        //this is the most basic way doMath will be called. it happens when two operands and an operator are available
+// if there is NOT a value in Operand2
+                //this invocation of doMath is used when there is a missing second operand (e.g. if the user presses the buttons 1 + =). it uses operand 1's value twice.
 
-                self.Operand1.setValue(result);
-            }
-            self.The_View.setResult(result);
-            self.The_View.displayResult();
+                //take operand 1's value and put it in to operand 2
 
-        } else { //if there is NOT an operator
+                //with both of these things done, calculator should be ready to continue adding incrementally.
 
-        }
-        console.log("result calculated is", result);
+            //if we DON'T have an error
 
+//if there IS a history (checked by seeing if there's a historic operator
+                    //do math again, this time using the historic operand as the first number and the result as the second number. This should allow for order of operations to work.
 
-        self.log_status();
-        self.justEqualsed = true;
-        self.forceWriteToFirstOperand = true;
+                    //we can clear out the history now.
+
+                //whatever the result was becomes the new operand 1
+
+            //update the display with the new result
+
+            //display it
+
+//if there is NOT an operator
+            //this is empty for now. I can't think of anything that should be done if there is NOT an operator. Maybe this else statement is unnecessary.
+
+        //just a console.log
+
+        //usual log_status
+
+        //the equals sign was just pressed, so we keep track of that.
+
+        //NOW we force input to be written to the first operand. this is in case the user presses someothing like 1 + 2 = 5 without pressing clear immediately after the equals. the 5 clobers out the 1 but keeps the 2 in tact
+
+        // LFZ End
     };
 
     this.backToBaseline = function () {
